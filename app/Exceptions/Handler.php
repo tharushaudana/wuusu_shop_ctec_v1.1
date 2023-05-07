@@ -42,13 +42,11 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof ValidationException) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "Validation Failed!",
-                    'errors' => $exception->validator->errors()
-                ], 400);
-            }
+            return response()->json([
+                'status' => "error",
+                'message' => "Validation Failed!",
+                'errors' => $exception->validator->errors()
+            ], 400);
         }
 
         return parent::render($request, $exception);
@@ -56,19 +54,11 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        if ($request->is('api/*')) {
-            return response()->json([
-                'status' => "error",
-                'message' => 'User Unauthenticated!',
-                'errors' => null
-            ], 401);
-        } else {
-            if ($request->isMethod('GET')) {
-                return redirect(route('web.login', ['redirect_to' => $request->getPathInfo()]));
-            } else {
-                return redirect(route('web.login'));
-            }
-        }
+        return response()->json([
+            'status' => "error",
+            'message' => 'User Unauthenticated!',
+            'errors' => null
+        ], 401);
     }
 
     /**

@@ -16,11 +16,7 @@ class CheckIsNullMiddleware
     public function handle(Request $request, Closure $next, $role): Response
     {
         if (is_null($request->route($role))) {
-            if ($request->is('api/*')) {
-                return response()->error('Not found!', 404);
-            } else {
-                abort(404);
-            }
+            return response()->error('Not found!', 404);
         }
         
         return $next($request);

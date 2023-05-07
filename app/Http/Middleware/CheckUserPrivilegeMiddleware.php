@@ -17,11 +17,7 @@ class CheckUserPrivilegeMiddleware
     public function handle(Request $request, Closure $next, $role): Response
     {
         if (!in_array($this->getPrivilegeId($role), Auth::user()->privileges)) {
-            if ($request->is('api/*')) {
-                return response()->error('Permission denided!', 401);
-            } else {
-                abort(403);
-            }
+            return response()->error('Permission denided!', 403);
         }
         
         return $next($request);

@@ -13,7 +13,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('dashboard.pages.users')->with('users', User::where('id', '!=', Auth::user()->id)->get());
+        return response()->success([
+            'users' => User::where('id', '!=', Auth::user()->id)->get()
+        ]);
     }
 
     public function store(RegisterUserRequest $request)
@@ -24,7 +26,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return redirect()->back()->with('success', $user->name.' has been registered.');
+        return response()->success(null, $user->name.' has been registered.');
     }
 
     public function show(User $user) 
@@ -32,7 +34,7 @@ class UserController extends Controller
         if ($user->id == Auth::user()->id) {
             return redirect(route('web.pages.profile'));
         } else {
-            return view('dashboard.pages.user', [
+            return response()->success([
                 'user' => $user,
                 'privileges' => $user->privileges()->get()
             ]);
@@ -45,7 +47,7 @@ class UserController extends Controller
 
         $user->privileges()->set($request->privileges);
 
-        return redirect()->back()->with('success', 'Privileges are updated successfully.');
+        return response()->success(null, 'Privileges are updated successfully.');
     }
 
     public function destroy(User $user)

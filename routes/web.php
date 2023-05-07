@@ -42,16 +42,22 @@ Route::bind('_audit', function ($id) {
 */
 
 Route::get('/tt', function (Request $request) {
-    return Auth::user()->audits()->paginate(2);
+    //return Auth::user()->audits()->paginate(2);
 });
 
 //### Login
 Route::group(['prefix' => '/login'], function () {
-    Route::get('/', [AuthController::class, 'login_Get'])->name('web.login');
-    Route::post('/', [AuthController::class, 'login_Post'])->middleware('checkRecaptchaResponse');
+    Route::post('/', [AuthController::class, 'login'])->middleware('checkRecaptchaResponse');
 });
 
 Route::group(['middleware' => 'auth'], function () {
+    //### Check is Logged
+    Route::get('/logged', function () {
+        return response()->success([
+            'user' => Auth::user()
+        ]);
+    });
+
     //### Pages.Home
     Route::get('/', function () {
         return view('dashboard.pages.home');

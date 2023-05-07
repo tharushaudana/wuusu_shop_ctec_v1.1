@@ -19,7 +19,7 @@ class CheckRecaptchaResponseMiddleware
         $response = $request->input('g-recaptcha-response');
 
         if (is_null($response)) {
-            return redirect()->back()->withErrors(['g-recaptcha-response' => 'Recaptcha response is required.']);
+            return response()->error('Recaptcha response is required!', 400);
         }
 
         $http_response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -29,11 +29,11 @@ class CheckRecaptchaResponseMiddleware
         ]);
 
         if (!$http_response->json('success')) {
-            return redirect()->back()->withErrors(['recaptcha_v3' => 'Recaptcha cheking failed.']);
+            return response()->error('Recaptcha cheking failed!', 400);
         }
 
         if ($http_response->json('score') < 0.5) {
-            return redirect()->back()->withErrors(['recaptcha_v3' => 'Recaptcha score is very low.']);
+            return response()->error('Recaptcha score is very low!', 400);
         }
 
         return $next($request);

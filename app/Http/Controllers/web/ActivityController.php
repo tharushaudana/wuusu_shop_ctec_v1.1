@@ -15,17 +15,18 @@ class ActivityController extends Controller
     public function index(ActivityFilterRequest $request, User $user = null)
     {
         if (!is_null($user) && $user->id == Auth::user()->id) {
-            return redirect(route('web.pages.my.activities'));
+            $audits = $this->retriveAudits($user);
+            
+            return response()->success([
+                'user' => $user,
+                'audits' => $audits->orderBy('id', 'desc')->paginate(13),
+            ]);
         } else {
             $audits = $this->retriveAudits($user);
 
-            return view('dashboard.pages.activities', [
+            return response()->success([
                 'user' => $user,
                 'audits' => $audits->orderBy('id', 'desc')->paginate(13),
-                'filter_type' => $request->query('filter_type'),
-                'date' => $request->query('date'),
-                'date_start' => $request->query('date_start'),
-                'date_end' => $request->query('date_end')
             ]);
         }
     }
