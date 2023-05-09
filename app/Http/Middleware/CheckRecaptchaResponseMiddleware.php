@@ -19,6 +19,10 @@ class CheckRecaptchaResponseMiddleware
         $response = $request->input('g-recaptcha-response');
 
         if (is_null($response)) {
+            $response = $request->query('g-recaptcha-response');
+        }
+
+        if (is_null($response)) {
             return response()->error('Recaptcha response is required!', 400);
         }
 

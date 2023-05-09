@@ -12,24 +12,34 @@ class WebSession extends Model
 
     protected $hidden = [
         'payload',
+        'user_agent',
         'last_activity',
     ];
 
     protected $appends = [
         'last_used_at',
+        'browser',
+        'platform'
     ];
 
     protected $casts = ['id' => 'string'];
 
-    //### for 'user_agent'
-    protected function getUserAgentAttribute($user_agent) {
-        $agent = new Agent();
-        $agent->setUserAgent($user_agent);
-        return $agent;
-    }
-
     //### for 'last_used_at'
     protected function getLastUsedAtAttribute() {
         return date('Y-m-d H:i:s', $this->last_activity);
+    }
+
+    //### for 'browser'
+    protected function getBrowserAttribute() {
+        $agent = new Agent();
+        $agent->setUserAgent($this->user_agent);
+        return $agent->browser();
+    }
+
+    //### for 'platform'
+    protected function getPlatformAttribute() {
+        $agent = new Agent();
+        $agent->setUserAgent($this->user_agent);
+        return $agent->platform();
     }
 }

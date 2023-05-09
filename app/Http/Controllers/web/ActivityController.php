@@ -50,14 +50,6 @@ class ActivityController extends Controller
         ]);
     }
 
-    public function filter(ActivityFilterRequest $request) {
-        $url = $request->fullUrlWithQuery($request->only('filter_type', 'date', 'date_start', 'date_end'));
-
-        $url = str_replace('/filter', '', $url);
-
-        return redirect($url);
-    }
-
     public function download(ActivityFilterRequest $request, User $user = null) 
     {
         $audits = $this->retriveAudits($user)->orderBy('id', 'desc')->get();

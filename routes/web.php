@@ -76,8 +76,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => '/activities'], function() {
             Route::get('/', [ActivityController::class, 'index'])->name('web.pages.my.activities');
             Route::get('/info/{_audit}', [ActivityController::class, 'show'])->name('web.pages.my.activity')->middleware('checkIsNull:_audit');
-            Route::post('/filter', [ActivityController::class, 'filter'])->middleware('checkRecaptchaResponse');
-            Route::post('/download', [ActivityController::class, 'download'])->middleware('checkRecaptchaResponse');
+            Route::get('/download', [ActivityController::class, 'download'])->middleware('checkRecaptchaResponse');
         });
     });
 
@@ -91,8 +90,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group(['prefix' => '/activities', 'middleware' => ['checkUserPrivilege:SHOW_USER_ACTIVITIES']], function() {
                 Route::get('/', [ActivityController::class, 'index'])->name('web.pages.user.activities');
                 Route::get('/info/{_audit}', [ActivityController::class, 'show'])->name('web.pages.user.activity')->middleware('checkIsNull:_audit');
-                Route::post('/filter', [ActivityController::class, 'filter'])->middleware('checkRecaptchaResponse');
-                Route::post('/download', [ActivityController::class, 'download'])->middleware('checkRecaptchaResponse', 'checkUserPrivilege:DOWNLOAD_USER_ACTIVITIES');
+                Route::get('/download', [ActivityController::class, 'download'])->middleware('checkRecaptchaResponse', 'checkUserPrivilege:DOWNLOAD_USER_ACTIVITIES');
             });
             Route::post('/setprivileges', [UserController::class, 'setPrivileges'])->middleware('checkUserPrivilege:UPDATE_USER_PRIVILEGES', 'checkRecaptchaResponse');
             Route::delete('/', [UserController::class, 'destroy'])->middleware('checkRecaptchaResponse', 'checkUserPrivilege:DELETE_USERS');

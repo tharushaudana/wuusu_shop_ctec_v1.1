@@ -21,9 +21,22 @@ class ApiSession extends Model
         'os_version',
     ];
 
+    protected $hidden = [
+        'user_agent',
+    ];
+
+    protected $appends = [
+        'token'
+    ];
+
     public $timestamps = false;
 
-    //### Custom functions
+    //### for 'token' attribute
+    protected function getTokenAttribute() {
+        return PersonalAccessToken::where('id', $this->token_id)->first();
+    }
+
+    //### Public functions
 
     public function token() {
         return PersonalAccessToken::where('id', $this->token_id)->first();
