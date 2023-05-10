@@ -14,38 +14,29 @@ class ActivityController extends Controller
 {
     public function index(ActivityFilterRequest $request, User $user = null)
     {
-        if (!is_null($user) && $user->id == Auth::user()->id) {
-            $audits = $this->retriveAudits($user);
-            
-            return response()->success([
-                'user' => $user,
-                'audits' => $audits->orderBy('id', 'desc')->paginate(13),
-            ]);
-        } else {
-            $audits = $this->retriveAudits($user);
+        $audits = $this->retriveAudits($user);
 
-            return response()->success([
-                'user' => $user,
-                'audits' => $audits->orderBy('id', 'desc')->paginate(13),
-            ]);
-        }
+        return response()->success([
+            'user' => $user,
+            'audits' => $audits->orderBy('id', 'desc')->paginate(13),
+        ]);
     }
 
     public function show(User $user, Audit $audit)
     {
-        if ($user->id == Auth::user()->id) {
-            return redirect(route('web.pages.my.activity', $audit->id));
-        }
-
         if (!is_null($user->id)) {
             //### for routes like: /users/4/activities/20  (activity of other user)
-            if ($audit->user_id != $user->id) abort(404);
+            if ($audit->user_id != $user->id) {
+                return response()->error('Not found!', 404);
+            }
         } else {
             //### for routes like: /my/activities/34       (self activity)
-            if ($audit->user_id != Auth::user()->id) abort(404);
+            if ($audit->user_id != Auth::user()->id) {
+                return response()->error('Not found!', 404);
+            }
         }
 
-        return view('dashboard.pages.activity', [
+        return response()->success([
             'audit' => $audit
         ]);
     }
